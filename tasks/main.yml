@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for mariadb_config
+
+- name: Ensure dependencies are installed
+  ansible.builtin.package:
+    name: python3-PyMySQL
+    state: present
+  become: true
+
+- name: Configure mariadb databases
+  community.mysql.mysql_db:
+    name: "{{ item.dbname }}"
+    collation: "{{ item.collation | default(omit) }}"
+    state: "{{ item.state | default('present') }}"
+    login_user: root
+    login_password: "{{ mariadb_config_root_password }}"
+  loop: "{{ mariadb_config_database }}"
+
+- name: Configure mariadb users and privileges
+  community.mysql.mysql_user:
+    name: "{{ item.dbuser }}"
+    password: "{{ item.dbpass }}"
+    priv: "{{ item.dbname }}.{{ item.dbpriv }}"
+    column_case_sensitive: true
+    state: "{{ item.state | default('present') }}"
+    host: "%"
+    login_user: root
+    login_password: "{{ mariadb_config_root_password }}"
+  loop: "{{ mariadb_config_user }}"
+  no_log: true

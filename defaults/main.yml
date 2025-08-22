@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: MIT-0
+---
+# defaults file for mariadb_config
+
+# list of databases to create
+mariadb_config_database:
+  - dbname: exampledb
+    state: present
+    collation: utf8_bin
+
+# list of users to create with privileges
+mariadb_config_user:
+  - dbuser: exampleuser
+    dbpass: examplePassword
+    dbname: exampledb
+    dbpriv: "*:ALL"
+    state: absent
+
+# password for the mariadb or mysql db root user
+mariadb_config_root_password: examplerootpw
